@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="KAIRO One: a 3.4 g titanium smart ring for sleep, heart rate and recovery. Nine days per charge, no subscription.">
+<meta property="og:title" content="KAIRO One">
+<meta property="og:description" content="Your body's data, in 3.4 grams of titanium.">
+<meta property="og:image" content="img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%22640 185 720 720%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M1258 313 A348 348 0 1 1 1188 252 L1146 378 Z M1220 393 L1071 469 L1116 302 A268 268 0 1 0 1220 393 Z%22/%3E%3C/svg%3E">
+<title>KAIRO One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one pinned stage of six full-screen chapters; each chapter enters with its own transition
+   (slide-up stack, circle reveal, zoom pop, side wipe, 3D flip). Then normal-flow lifestyle, in-the-box, FAQ, footer. */
+:root{
+  color-scheme: light;
+  --ink:#111418;      /* text, page ground */
+  --fog:#D2D4DA;      /* hero surface, matched to the hero photo */
+  --night:#070F26;    /* sleep, matched to the bedroom photo */
+  --moon:#F3CF6B;
+  --rem:#9FB0FF;
+  --pulse:#E35A45;    /* heart, matched to the macro photo */
+  --cream:#FFF3EC;
+  --graphite:#212429; /* build */
+  --steel:#8C939A;
+  --stone:#C3C7B8;    /* finishes */
+  --cobalt:#264BD8;   /* pre-order */
+  --paper:#F3F4F2;
+  --white:#FFFFFF;
+  --display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gutter:clamp(16px,6vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;overflow-x:hidden}
+button{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+/* ---------- logo ---------- */
+.mark{width:1.35em;height:1.35em;fill:currentColor;flex:none}
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.2rem;letter-spacing:.14em;text-decoration:none;color:inherit}
+
+/* ---------- fixed UI ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) var(--gutter) 14px;color:var(--ui);transition:color .35s}
+.nav ul{display:flex;gap:clamp(14px,2.4vw,30px);list-style:none;align-items:center}
+.nav a{color:inherit;text-decoration:none;font-size:.92rem}
+.nav a:hover{text-decoration:underline;text-underline-offset:4px}
+.nav .pill{border:1.5px solid currentColor;border-radius:999px;padding:7px 16px;font-weight:600}
+.nav .pill:hover{text-decoration:none;background:var(--ui);color:var(--ui-bg)}
+body{--ui:var(--ink);--ui-bg:var(--white)}
+body[data-tone="dark"]{--ui:var(--white);--ui-bg:var(--ink)}
+.static .nav,.static .rail,.static .counter{mix-blend-mode:difference;--ui:var(--white);--ui-bg:var(--ink)}
+.rail{position:fixed;right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:12px;
+  color:var(--ui);transition:opacity .3s,color .35s}
+.rail button{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;background:transparent;cursor:pointer;transition:transform .2s,background .2s}
+.rail button.on{background:currentColor;transform:scale(1.25)}
+.counter{position:fixed;left:var(--gutter);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:50;font-family:var(--mono);font-size:.74rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ui);transition:opacity .3s,color .35s;font-variant-numeric:tabular-nums}
+.away .rail,.away .counter{opacity:0;pointer-events:none}
+
+/* ---------- stage + panels ---------- */
+.stage{position:relative;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
+.panel{position:absolute;inset:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:center;
+  gap:clamp(20px,4vw,64px);padding:calc(env(safe-area-inset-top,0px) + 80px) var(--gutter) 64px;will-change:transform}
+.panel > *{position:relative;z-index:1}
+.panel > .bg{position:absolute;inset:0;z-index:0}
+.bg img{width:100%;height:100%;object-fit:cover}
+.copy,.visual{min-width:0}
+.visual{display:grid;place-items:center;gap:18px}
+.sm-only{display:none}
+.p1{background:var(--fog);color:var(--ink);z-index:1}
+.p2{background:var(--night);color:#E9ECF7;z-index:2}
+.p3{background:var(--pulse);color:var(--cream);z-index:3}
+.p4{background:var(--graphite);color:#E6E8EA;z-index:4}
+.p5{background:var(--stone);color:var(--ink);z-index:5}
+.p6{background:var(--cobalt);color:var(--white);z-index:6}
+
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.h{font-family:var(--display);font-weight:720;font-size:clamp(2.3rem,6vw,5.4rem);line-height:.94;letter-spacing:-.025em;text-wrap:balance;margin-block:14px 18px}
+.h em{font-style:normal;font-weight:400}
+.lede{max-width:44ch;font-size:clamp(1rem,1.25vw,1.15rem);opacity:.88}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;font-weight:600;text-decoration:none;border:1.5px solid currentColor;
+  background:transparent;cursor:pointer;transition:transform .2s,background .2s,color .2s}
+.btn:hover{transform:translateY(-2px)}
+.p1 .btn.solid{background:var(--ink);color:var(--fog);border-color:var(--ink)}
+.p6 .btn.solid{background:var(--white);color:var(--cobalt);border-color:var(--white)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:30px;font-family:var(--mono);font-size:.8rem}
+.facts b{display:block;font-family:var(--display);font-size:1.6rem;font-weight:650;letter-spacing:-.01em;line-height:1.1}
+
+/* hero: full-bleed photo, ring sits on the right */
+.p1 .bg img{object-position:72% 50%}
+.p1 .copy{max-width:620px}
+
+/* ---------- sleep ---------- */
+.p2{grid-template-columns:minmax(0,560px) minmax(0,1fr)}
+.p2 .bg img{object-position:right 50%}
+.p2 .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--night) 0%,rgba(7,15,38,.82) 38%,rgba(7,15,38,0) 70%)}
+.p2 .h{font-size:clamp(2.2rem,4.6vw,4.3rem)}
+.card{width:100%;max-width:540px;border-radius:20px;padding:clamp(16px,2.2vw,24px)}
+.sleepcard{background:rgba(7,15,38,.55);border:1px solid rgba(233,236,247,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin-top:22px}
+.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.score{font-family:var(--display);font-size:3rem;font-weight:700;line-height:1;color:var(--moon);font-variant-numeric:tabular-nums}
+.score span{font-size:1rem;opacity:.6;font-weight:500;margin-left:4px;color:#E9ECF7}
+#hypno{width:100%;height:auto;display:block}
+#hypno text{font-family:var(--mono);font-size:11px;fill:#E9ECF7;opacity:.7}
+.totals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.totals div{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.totals b{display:block;font-family:var(--display);font-size:1.15rem;font-weight:650;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+
+/* ---------- heart ---------- */
+.p3{grid-template-columns:minmax(0,540px) minmax(0,1fr)}
+.p3 .media{position:absolute;top:0;right:0;bottom:0;width:60%;z-index:0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 32%);mask-image:linear-gradient(90deg,transparent 0%,#000 32%)}
+.p3 .media img{width:100%;height:100%;object-fit:cover;object-position:30% 50%}
+.p3 .h{font-size:clamp(2.2rem,4.6vw,4.3rem)}
+.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;width:100%;max-width:520px;background:rgba(255,243,236,.3);border-radius:18px;overflow:hidden;margin-top:20px}
+.ro{background:var(--pulse);padding:14px 18px}
+.ro b{display:block;font-family:var(--display);font-size:clamp(1.9rem,3.2vw,2.7rem);font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.ro small{font-family:var(--mono);font-size:.8rem;font-weight:400;margin-left:6px;opacity:.8}
+.ecgbox{width:100%;max-width:520px;position:relative;margin-top:10px}
+#ecg{width:100%;height:auto;display:block;overflow:visible}
+#ecg path{fill:none;stroke:var(--cream);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+#ecg line{stroke:rgba(255,243,236,.3);stroke-width:1;stroke-dasharray:3 5}
+.beat{position:absolute;right:0;top:65%;width:12px;height:12px;border-radius:50%;background:var(--cream);transform:translate(50%,-50%);animation:beat 1.15s ease-out infinite}
+@keyframes beat{0%{box-shadow:0 0 0 0 rgba(255,243,236,.7)}70%{box-shadow:0 0 0 18px rgba(255,243,236,0)}100%{box-shadow:0 0 0 0 rgba(255,243,236,0)}}
+
+/* ---------- build ---------- */
+.specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin-top:24px;max-width:560px}
+.specs div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid rgba(230,232,234,.16);font-size:.92rem}
+.specs dt{color:var(--steel)}
+.specs dd{font-family:var(--mono);font-size:.84rem;text-align:right;font-variant-numeric:tabular-nums}
+.shot{width:min(100%,560px);aspect-ratio:1;max-height:72svh}
+.shot img{width:100%;height:100%;object-fit:contain}
+.p4 .shot{-webkit-mask-image:radial-gradient(closest-side,#000 78%,transparent);mask-image:radial-gradient(closest-side,#000 78%,transparent)}
+.callout{font-family:var(--mono);font-size:.78rem;color:var(--steel);letter-spacing:.08em;text-transform:uppercase;text-align:center}
+
+/* ---------- finishes ---------- */
+.label{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 10px;opacity:.75}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{display:flex;align-items:center;gap:10px;padding:7px 14px 7px 7px;border-radius:999px;border:1.5px solid rgba(17,20,24,.25);background:rgba(255,255,255,.35);cursor:pointer;font-weight:600;font-size:.92rem;transition:border-color .2s,background .2s}
+.sw span{width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.sw[aria-pressed="true"]{border-color:var(--ink);background:rgba(255,255,255,.75)}
+.sizes{display:flex;flex-wrap:wrap;gap:8px}
+.size{width:44px;height:44px;border-radius:12px;border:1.5px solid rgba(17,20,24,.25);background:transparent;cursor:pointer;font-family:var(--mono);font-weight:500;transition:background .2s,color .2s}
+.size[aria-pressed="true"]{background:var(--ink);color:var(--stone);border-color:var(--ink)}
+.note{margin-top:16px;font-size:.92rem;max-width:44ch;opacity:.85}
+.finishname{font-family:var(--display);font-size:1.4rem;font-weight:600}
+.stack{position:relative;width:min(100%,520px);aspect-ratio:1;max-height:64svh;
+  -webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent);mask-image:radial-gradient(closest-side,#000 70%,transparent)}
+.stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.94) rotate(-4deg);transition:opacity .45s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.stack img.on{opacity:1;transform:none}
+
+/* ---------- pre-order ---------- */
+.pick{margin-top:18px;font-family:var(--mono);font-size:.84rem;padding:10px 14px;border:1px solid rgba(255,255,255,.35);border-radius:12px;display:inline-block}
+.form{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;max-width:520px}
+.form label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.form input{flex:1 1 220px;min-width:0;padding:13px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.08);color:var(--white);font:inherit}
+.form input::placeholder{color:rgba(255,255,255,.65)}
+.msg{margin-top:12px;min-height:1.5em;font-weight:600}
+.p6 .shot{width:min(100%,460px);max-height:52svh}
+.batch{width:100%;max-width:380px;border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:18px}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.2);margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;width:64%;background:var(--white);border-radius:inherit}
+.batch .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.78rem;font-variant-numeric:tabular-nums}
+
+/* ---------- after the stage ---------- */
+.after{background:var(--paper);color:var(--ink);padding-block:clamp(64px,10vw,120px) 40px;padding-inline:var(--gutter);position:relative;z-index:10}
+.wrap{max-width:1180px;margin-inline:auto}
+.after .h{font-size:clamp(2rem,4.4vw,3.6rem)}
+.life{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,60px);align-items:end;margin-bottom:28px}
+.life .lede{opacity:.75}
+.photo{border-radius:clamp(16px,2vw,28px);overflow:hidden;aspect-ratio:16/8;max-width:100%}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+.box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:center;margin-top:clamp(64px,9vw,120px)}
+.box .photo{aspect-ratio:1;background:#DFE2E6}
+.inbox{list-style:none;margin-top:22px;counter-reset:n}
+.inbox li{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-top:1px solid rgba(17,20,24,.14);font-size:1.02rem}
+.inbox li:last-child{border-bottom:1px solid rgba(17,20,24,.14)}
+.inbox span{font-family:var(--mono);font-size:.82rem;opacity:.6;text-align:right}
+.faqgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:clamp(24px,5vw,80px);margin-top:clamp(64px,9vw,120px)}
+details{border-top:1px solid rgba(17,20,24,.16);padding:18px 0}
+details:last-child{border-bottom:1px solid rgba(17,20,24,.16)}
+summary{cursor:pointer;font-family:var(--display);font-size:1.25rem;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);font-weight:400;transition:transform .25s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:10px;max-width:60ch;opacity:.82}
+footer{margin-top:clamp(64px,9vw,110px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;border-top:1px solid rgba(17,20,24,.16);padding-top:26px}
+.bigmark{display:flex;align-items:center;gap:.18em;font-family:var(--display);font-weight:800;font-size:clamp(3.2rem,13vw,10rem);letter-spacing:.06em;line-height:.8;color:var(--ink)}
+.bigmark .mark{width:.82em;height:.82em}
+.fine{font-family:var(--mono);font-size:.74rem;opacity:.65;max-width:40ch}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .nav ul li:not(:last-child){display:none}
+  .panel,.p2,.p3{grid-template-columns:minmax(0,1fr);align-content:center;gap:16px;padding-top:calc(env(safe-area-inset-top,0px) + 70px);padding-bottom:56px}
+  .h,.p2 .h,.p3 .h{font-size:clamp(2rem,9.5vw,3rem);margin-block:10px 12px}
+  .lede{font-size:.98rem}
+  .p1 .bg{display:none}
+  .sm-only{display:grid}
+  .p1 .visual img{width:min(78vw,30svh);-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent);mask-image:radial-gradient(closest-side,#000 72%,transparent)}
+  .p2 .bg img{object-position:72% 50%}
+  .p2 .bg::after{background:linear-gradient(180deg,rgba(7,15,38,.55) 0%,rgba(7,15,38,.88) 55%,var(--night) 100%)}
+  .p3 .media{display:none}
+  .p4 .visual,.p6 .visual{display:none}
+  .stack{width:min(60vw,24svh)}
+  .p5 .note,.p5 .finishname{display:none}
+  .p5 .label{margin:16px 0 8px}
+  .facts{margin-top:18px}.facts b{font-size:1.25rem}
+  .actions{margin-top:18px}
+  .score{font-size:2.3rem}
+  .ro{padding:12px 14px}
+  .specs{grid-template-columns:minmax(0,1fr);margin-top:14px}
+  .specs div{padding:7px 0}
+  .life,.box,.faqgrid{grid-template-columns:minmax(0,1fr)}
+  .photo{aspect-ratio:4/3}
+  .rail{display:none}
+}
+@media (max-width:860px) and (max-height:760px){
+  .p1 .lede,.p2 .lede,.p3 .lede{display:none}
+  .p5 .visual{display:none}
+}
+/* fallback: no GSAP or reduced motion → panels simply stack */
+.static .stage{height:auto}
+.static .panel{position:relative;min-height:100svh}
+@media (prefers-reduced-motion:reduce){.beat{animation:none}.stack img{transition:none}}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="kairo-mark" viewBox="640 185 720 720"><path fill-rule="evenodd" d="M1258 313 A348 348 0 1 1 1188 252 L1146 378 Z M1220 393 L1071 469 L1116 302 A268 268 0 1 0 1220 393 Z"/></symbol>
+</svg>
+
+<nav class="nav" aria-label="Main">
+  <a class="brand" href="#top" data-go="0" aria-label="KAIRO home"><svg class="mark" aria-hidden="true"><use href="#kairo-mark"/></svg>KAIRO</a>
+  <ul>
+    <li><a href="#sleep" data-go="1">Sleep</a></li>
+    <li><a href="#heart" data-go="2">Heart</a></li>
+    <li><a href="#build" data-go="3">Build</a></li>
+    <li><a href="#finishes" data-go="4">Finishes</a></li>
+    <li><a href="#faq" data-go="faq">FAQ</a></li>
+    <li><a class="pill" href="#preorder" data-go="5">Pre-order</a></li>
+  </ul>
+</nav>
+<div class="rail" aria-label="Chapters"></div>
+<div class="counter" aria-hidden="true"><span id="cnum">01</span> / 06 · <span id="cname">KAIRO One</span></div>
+
+<main>
+<section class="stage">
+
+  <!-- 1 · Hero -->
+  <article class="panel p1" data-tone="light" id="top" data-name="KAIRO One">
+    <div class="bg"><img src="img/hero.webp" alt="" fetchpriority="high"></div>
+    <div class="copy">
+      <div class="eyebrow rv">KAIRO One · Smart ring</div>
+      <h1 class="h rv">Your body's data, in <em>3.4 grams</em> of titanium.</h1>
+      <p class="lede rv">Sleep stages, heart rate variability and recovery, read from your finger. Nine days per charge and no subscription.</p>
+      <div class="actions rv">
+        <a class="btn solid" href="#preorder" data-go="5">Pre-order · $299</a>
+        <a class="btn" href="#sleep" data-go="1">See how it works ↓</a>
+      </div>
+      <div class="facts rv">
+        <div><b>9 days</b>battery</div>
+        <div><b>100 m</b>water rated</div>
+        <div><b>2.6 mm</b>thin</div>
+      </div>
+    </div>
+    <div class="visual sm-only rv"><img src="img/hero-sq.webp" alt="KAIRO One ring in raw titanium, showing three sensors on the inside"></div>
+  </article>
+
+  <!-- 2 · Sleep (slides up, previous shrinks back) -->
+  <article class="panel p2" data-tone="dark" id="sleep" data-name="Sleep">
+    <div class="bg"><img src="img/sleep.webp" alt="" loading="eager"></div>
+    <div class="copy">
+      <div class="eyebrow rv">Sleep</div>
+      <h2 class="h rv">See every stage of the night.</h2>
+      <p class="lede rv">KAIRO reads movement, pulse and skin temperature to map light, deep and REM sleep. Each morning you get one score and a clear picture of how you slept.</p>
+      <div class="card sleepcard rv">
+        <div class="cardhead">
+          <div><div class="eyebrow">Sleep score · last night</div><div class="score">86<span>/100</span></div></div>
+          <div class="eyebrow">23:00 to 07:00</div>
+        </div>
+        <svg id="hypno" viewBox="0 0 520 210" role="img" aria-label="Hypnogram showing sleep stages from 23:00 to 07:00"></svg>
+        <div class="totals" id="totals"></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 3 · Heart (circle reveal) -->
+  <article class="panel p3" data-tone="dark" id="heart" data-name="Heart">
+    <div class="media"><img src="img/heart.webp" alt="Green and red optical sensors glowing on the inside of the ring"></div>
+    <div class="copy">
+      <div class="eyebrow rv">Heart</div>
+      <h2 class="h rv">Every beat, all day and all night.</h2>
+      <p class="lede rv">Green, red and infrared sensors on the inside of the ring track resting heart rate, HRV and blood oxygen. A rising temperature or a falling HRV shows up before you feel run down.</p>
+      <div class="readouts rv">
+        <div class="ro"><span class="eyebrow">Resting HR</span><b>52<small>bpm</small></b></div>
+        <div class="ro"><span class="eyebrow">HRV</span><b>64<small>ms</small></b></div>
+        <div class="ro"><span class="eyebrow">Blood oxygen</span><b>97<small>% SpO₂</small></b></div>
+        <div class="ro"><span class="eyebrow">Skin temp</span><b>+0.3<small>°C</small></b></div>
+      </div>
+      <div class="ecgbox rv">
+        <svg id="ecg" viewBox="0 0 520 110" aria-hidden="true"><line x1="0" x2="520" y1="72" y2="72"/><path/></svg>
+        <span class="beat"></span>
+      </div>
+    </div>
+  </article>
+
+  <!-- 4 · Build (zoom pop) -->
+  <article class="panel p4" data-tone="dark" id="build" data-name="Build">
+    <div class="copy">
+      <div class="eyebrow rv">Build</div>
+      <h2 class="h rv">Grade 5 titanium. Nine days per charge.</h2>
+      <dl class="specs rv">
+        <div><dt>Shell</dt><dd>Ti-6Al-4V</dd></div>
+        <div><dt>Weight</dt><dd>3.4 – 5.1 g</dd></div>
+        <div><dt>Width</dt><dd>7.9 mm</dd></div>
+        <div><dt>Thickness</dt><dd>2.6 mm</dd></div>
+        <div><dt>Battery</dt><dd>up to 9 days</dd></div>
+        <div><dt>Full charge</dt><dd>70 min</dd></div>
+        <div><dt>Water</dt><dd>100 m</dd></div>
+        <div><dt>Sensors</dt><dd>PPG · temp · 3-axis</dd></div>
+      </dl>
+    </div>
+    <div class="visual rv">
+      <div class="shot"><img src="img/build.webp" alt="Exploded view: titanium shell, curved battery, circuit board and sensors"></div>
+      <div class="callout">Shell · battery · board · sensors</div>
+    </div>
+  </article>
+
+  <!-- 5 · Finishes (side wipe) -->
+  <article class="panel p5" data-tone="light" id="finishes" data-name="Finishes">
+    <div class="copy">
+      <div class="eyebrow rv">Finishes &amp; sizes</div>
+      <h2 class="h rv">Four finishes. Sizes 6 to 13.</h2>
+      <div class="label rv">Finish · <span id="fname">Raw Titanium</span></div>
+      <div class="swatches rv" id="swatches"></div>
+      <div class="label rv">US size</div>
+      <div class="sizes rv" id="sizes"></div>
+      <p class="note rv">Not sure of your size? We send a free sizing kit first, and your ring ships once you've picked.</p>
+    </div>
+    <div class="visual rv">
+      <div class="stack" id="stack"></div>
+      <div class="finishname" id="fname2">Raw Titanium</div>
+    </div>
+  </article>
+
+  <!-- 6 · Pre-order (3D flip) -->
+  <article class="panel p6" data-tone="dark" id="preorder" data-name="Pre-order">
+    <div class="copy">
+      <div class="eyebrow rv">Pre-order · Batch 01</div>
+      <h2 class="h rv">$299. No subscription, ever.</h2>
+      <p class="lede rv">Batch 01 ships in March 2027. A $49 deposit holds your place, and you can cancel any time before it ships.</p>
+      <div class="pick rv">Your pick: <span id="pick">Raw Titanium · Size 9</span></div>
+      <form class="form rv" id="form" novalidate>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <button class="btn solid" type="submit">Reserve my ring</button>
+      </form>
+      <div class="msg" id="msg" role="status"></div>
+    </div>
+    <div class="visual rv">
+      <div class="shot"><img src="img/preorder.webp" alt="KAIRO box opened with the ring in its tray and the charging dock beside it"></div>
+      <div class="batch">
+        <div class="eyebrow">Batch 01 · 2,000 rings</div>
+        <div class="bar"><i></i></div>
+        <div class="row"><span>1,284 reserved</span><span>716 left</span></div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="after" id="faq">
+  <div class="wrap">
+    <div class="life">
+      <div>
+        <div class="eyebrow">Everyday</div>
+        <h2 class="h">Wear it on a run, at your desk and to bed.</h2>
+      </div>
+      <p class="lede">No screen, no buzzing and nothing to take off. KAIRO keeps measuring in the background and syncs when you open the app.</p>
+    </div>
+    <div class="photo"><img src="img/lifestyle.webp" alt="A runner tying her shoes on a city street at sunrise, wearing the ring"></div>
+
+    <div class="box">
+      <div class="photo"><img src="img/dock.webp" alt="The ring resting on its round white charging dock with a green status light"></div>
+      <div>
+        <div class="eyebrow">In the box</div>
+        <h2 class="h">Drop it on the dock. Done in 70 minutes.</h2>
+        <ul class="inbox">
+          <li>KAIRO One ring<span>your finish and size</span></li>
+          <li>Magnetic charging dock<span>green light when full</span></li>
+          <li>USB-C cable<span>1 m</span></li>
+          <li>Sizing kit<span>8 sizers, sent first</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faqgrid">
+      <div>
+        <div class="eyebrow">Questions</div>
+        <h2 class="h">Before you reserve.</h2>
+      </div>
+      <div>
+        <details open><summary>Does it work with iPhone and Android?</summary><p>Yes. The KAIRO app runs on iOS 17 and Android 12 or newer, and syncs with Apple Health and Health Connect.</p></details>
+        <details><summary>Do I need a subscription?</summary><p>No. Sleep, heart, recovery and trends are all included with the ring. There is nothing to renew.</p></details>
+        <details><summary>Can I swim or shower with it?</summary><p>Yes. The sealed titanium shell is rated to 100 m, so pools, the sea and the shower are all fine.</p></details>
+        <details><summary>How do I find my size?</summary><p>After you reserve, we post a free kit with eight plastic sizers. Wear one for a day, tell us the size, and your ring ships.</p></details>
+        <details><summary>How does charging work?</summary><p>Drop the ring onto the magnetic dock. It reaches full charge in about 70 minutes and lasts up to nine days.</p></details>
+      </div>
+    </div>
+
+    <footer>
+      <div class="bigmark"><svg class="mark" aria-hidden="true"><use href="#kairo-mark"/></svg>KAIRO</div>
+      <p class="fine">KAIRO is a fictional concept brand. Product details, prices and dates on this page are for demonstration. Concept site by Ravishan Tennakoon.</p>
+    </footer>
+  </div>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  const root = document.documentElement;
+  const $ = (s, el=document) => el.querySelector(s);
+  const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+
+  /* ---- hypnogram: minutes from 23:00, stage ---- */
+  const night = [[0,12,'A'],[12,40,'L'],[40,95,'D'],[95,130,'L'],[130,160,'R'],[160,200,'L'],[200,235,'D'],[235,265,'L'],
+                 [265,300,'R'],[300,310,'A'],[310,350,'L'],[350,362,'D'],[362,400,'R'],[400,430,'L'],[430,470,'R'],[470,480,'A']];
+  const rows = {A:{y:22,name:'Awake',c:'var(--pulse)'},R:{y:66,name:'REM',c:'var(--rem)'},L:{y:110,name:'Light',c:'rgba(233,236,247,.45)'},D:{y:154,name:'Deep',c:'var(--moon)'}};
+  const X = m => 64 + m / 480 * 448;
+  const NS = 'http://www.w3.org/2000/svg';
+  const hyp = $('#hypno');
+  const mk = (tag, attrs, parent=hyp) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  for (const k in rows) { const t = mk('text',{x:0,y:rows[k].y+4}); t.textContent = rows[k].name; }
+  [0,120,240,360,480].forEach((m,i) => {
+    mk('line',{x1:X(m),x2:X(m),y1:8,y2:172,stroke:'rgba(233,236,247,.12)','stroke-width':1});
+    const t = mk('text',{x:X(m),y:200,'text-anchor': i===0?'start':i===4?'end':'middle'}); t.textContent = ['23:00','01:00','03:00','05:00','07:00'][i];
+  });
+  let d = '';
+  night.forEach(([a,b,s],i) => { d += (i ? 'L' : 'M') + X(a) + ' ' + rows[s].y + ' L' + X(b) + ' ' + rows[s].y + ' '; });
+  mk('path',{d,fill:'none',stroke:'rgba(233,236,247,.3)','stroke-width':1.2});
+  const bars = night.map(([a,b,s]) => mk('rect',{x:X(a),y:rows[s].y-9,width:Math.max(1,X(b)-X(a)),height:18,rx:4,fill:rows[s].c}));
+  const tot = {D:0,R:0,L:0,A:0}; night.forEach(([a,b,s]) => tot[s] += b - a);
+  const fmt = m => `${Math.floor(m/60)}h ${String(m%60).padStart(2,'0')}m`;
+  $('#totals').innerHTML = ['D','R','L','A'].map(k => `<div><span class="dot" style="background:${rows[k].c}"></span>${rows[k].name}<b>${fmt(tot[k])}</b></div>`).join('');
+
+  /* ---- ECG trace ---- */
+  const beat = [[0,0],[26,0],[32,-7],[38,0],[48,0],[52,7],[57,-58],[62,16],[66,0],[78,0],[87,-12],[96,0],[104,0]];
+  let e = 'M0 72';
+  for (let b = 0; b < 5; b++) beat.forEach(([x,y]) => e += ` L${b*104 + x} ${72 + y}`);
+  const ecg = $('#ecg path'); ecg.setAttribute('d', e);
+  const ecgLen = ecg.getTotalLength();
+
+  /* ---- finishes + sizes ---- */
+  const finishes = [
+    {id:'raw',     name:'Raw Titanium', sw:['#c9ccd0','#868b92','#f4f5f6']},
+    {id:'basalt',  name:'Basalt',       sw:['#4a4e55','#1b1d20','#8d939b']},
+    {id:'brass',   name:'Brass',        sw:['#cfa95e','#86652a','#f5e2b0']},
+    {id:'glacier', name:'Glacier',      sw:['#b7cedc','#7894a7','#f0f7fb']}
+  ];
+  let finish = 0, size = 9;
+  const stack = $('#stack'), sw = $('#swatches');
+  finishes.forEach((f,i) => {
+    const im = new Image(); im.src = `img/finish-${f.id}.webp`; im.alt = `KAIRO One in ${f.name}`; stack.appendChild(im);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'sw'; b.id = 'finish-' + i;
+    b.innerHTML = `<span style="background:conic-gradient(${f.sw[0]},${f.sw[2]},${f.sw[1]},${f.sw[0]})"></span>${f.name}`;
+    b.addEventListener('click', () => { finish = i; applyFinish(); });
+    sw.appendChild(b);
+  });
+  const sz = $('#sizes');
+  for (let s = 6; s <= 13; s++) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'size'; b.id = 'size-' + s; b.textContent = s;
+    b.addEventListener('click', () => { size = s; applyFinish(); });
+    sz.appendChild(b);
+  }
+  function applyFinish(){
+    const f = finishes[finish];
+    $$('img', stack).forEach((im,i) => im.classList.toggle('on', i === finish));
+    $$('.sw').forEach((b,i) => b.setAttribute('aria-pressed', i === finish));
+    $$('.size').forEach(b => b.setAttribute('aria-pressed', +b.textContent === size));
+    $('#fname').textContent = $('#fname2').textContent = f.name;
+    $('#pick').textContent = `${f.name} · Size ${size}`;
+  }
+  applyFinish();
+
+  /* ---- reserve form (no backend: confirms on the page) ---- */
+  $('#form').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const v = $('#email').value.trim();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    $('#msg').textContent = ok
+      ? `Reserved: ${finishes[finish].name}, size ${size}. We'll email ${v} when sizing kits ship.`
+      : 'Enter an email address like name@example.com.';
+  });
+
+  /* ---- rail + counter ---- */
+  const panels = $$('.panel');
+  const rail = $('.rail');
+  panels.forEach((p,i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Go to ' + p.dataset.name);
+    b.addEventListener('click', () => go(i)); rail.appendChild(b);
+  });
+  let active = -1;
+  function setActive(i){
+    if (i === active) return; active = i;
+    $$('.rail button').forEach((b,k) => b.classList.toggle('on', k === i));
+    $('#cnum').textContent = String(i + 1).padStart(2,'0');
+    $('#cname').textContent = panels[i].dataset.name;
+    if (!document.body.classList.contains('away')) document.body.dataset.tone = panels[i].dataset.tone;
+  }
+  setActive(0);
+
+  let go = i => { const t = i === 'faq' ? $('#faq') : panels[i]; t.scrollIntoView({behavior:'smooth'}); };
+  $$('[data-go]').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); const g = a.dataset.go; go(g === 'faq' ? 'faq' : +g); }));
+
+  /* ---- scroll choreography ---- */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!window.gsap || !window.ScrollTrigger || reduce) { root.classList.add('static'); return; }
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
+  // hero load-in: photo settles, text rises
+  gsap.from($('.p1 .bg img'), { scale: 1.08, duration: 1.6, ease: 'power3.out' });
+  gsap.from($$('.rv', panels[0]), { y: 34, opacity: 0, duration: .9, stagger: .08, ease: 'power3.out' });
+
+  const start = [
+    null,
+    { yPercent: 100 },
+    { clipPath: 'circle(0% at 75% 55%)' },
+    { scale: .18, rotation: -16, opacity: 0 },
+    { clipPath: 'inset(0% 0% 0% 100%)' },
+    { rotationX: -95, transformOrigin: '50% 100%', transformPerspective: 1400 }
+  ];
+  const enter = [
+    null,
+    { yPercent: 0, ease: 'power2.out' },
+    { clipPath: 'circle(150% at 75% 55%)', ease: 'power2.in' },
+    { scale: 1, rotation: 0, opacity: 1, ease: 'back.out(1.5)' },
+    { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.inOut' },
+    { rotationX: 0, ease: 'power2.out' }
+  ];
+  start.forEach((s,i) => s && gsap.set(panels[i], s));
+
+  const labels = [0];
+  const STEP = 1.5; // 1 for the transition, .5 to rest on the page
+  const tl = gsap.timeline({
+    defaults: { duration: 1 },
+    scrollTrigger: {
+      trigger: '.stage', start: 'top top', end: '+=' + (panels.length - 1) * 120 + '%',
+      scrub: .8, pin: true, anticipatePin: 1,
+      snap: { snapTo: 'labels', duration: { min: .25, max: .7 }, delay: .08, ease: 'power1.inOut' },
+      onUpdate: self => {
+        const t = self.progress * tl.duration();
+        let i = 0; labels.forEach((lt,k) => { if (t >= lt - .55) i = k; }); setActive(i);
+      },
+      onLeave: () => { document.body.classList.add('away'); document.body.dataset.tone = 'light'; },
+      onEnterBack: () => { document.body.classList.remove('away'); document.body.dataset.tone = panels[active].dataset.tone; }
+    }
+  });
+  tl.addLabel('p0', 0);
+  for (let i = 1; i < panels.length; i++) {
+    const t = (i - 1) * STEP;
+    tl.to(panels[i - 1], { scale: .9, opacity: .3, borderRadius: 28, ease: 'power1.in' }, t);
+    tl.to(panels[i], enter[i], t);
+    tl.from($$('.rv', panels[i]), { y: 50, opacity: 0, stagger: .06, duration: .5, ease: 'power2.out' }, t + .42);
+    if (i === 1) { tl.from('.p2 .bg img', { scale: 1.15, duration: 1, ease: 'power1.out' }, t);
+                   tl.from(bars, { scaleX: 0, transformOrigin: '0% 50%', stagger: .02, duration: .5, ease: 'power2.out' }, t + .55); }
+    if (i === 2) { tl.from('.p3 .media img', { scale: 1.25, duration: 1, ease: 'power1.out' }, t);
+                   gsap.set(ecg, { strokeDasharray: ecgLen, strokeDashoffset: ecgLen });
+                   tl.to(ecg, { strokeDashoffset: 0, duration: .7, ease: 'none' }, t + .55); }
+    if (i === 3) tl.from('.p4 .shot img', { rotation: 12, scale: .8, duration: .9, ease: 'power2.out' }, t + .1);
+    if (i === 5) tl.from('.bar i', { width: 0, duration: .5, ease: 'power2.out' }, t + .6);
+    tl.addLabel('p' + i, t + 1);
+    labels.push(t + 1);
+  }
+  tl.to({}, { duration: .4 });
+
+  // gentle reveal for the sections after the stage
+  $$('.after .life, .after .photo, .after .box > div, .after .faqgrid').forEach(el =>
+    gsap.from(el, { y: 40, opacity: 0, duration: .8, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+
+  go = i => {
+    const st = tl.scrollTrigger;
+    const y = i === 'faq' ? st.end + 2 : st.labelToScroll('p' + i);
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+})();
+</script>
+
+</body>
+</html>
